@@ -2,6 +2,18 @@
 Changelog for package eband_local_planner
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.2.1 (2014-04-25)
+------------------
+* added jack as a maintainer for the package
+* 0.2.0
+* updated changelogs in preparation of v0.2.0
+* changing some fudge factors
+* removed band hack. attempting band repair algorithm now
+* changes to hysteresis loop. still has some problems
+* fixed indentation. closes `#10 <https://github.com/utexas-bwi/eband_local_planner/issues/10>`_
+* eband_local_planner now fails when new frames cannot be added to the band. closes `#9 <https://github.com/utexas-bwi/eband_local_planner/issues/9>`_
+* Contributors: Piyush Khandelwal
+
 0.1.2 (2013-08-12)
 ------------------
 * stopped publishing empty bubble heading message. closes `#6 <https://github.com/utexas-bwi/eband_local_planner/issues/6>`_
