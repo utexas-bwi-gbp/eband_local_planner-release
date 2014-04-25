@@ -1,3 +1,22 @@
+## eband_local_planner (hydro) - 0.2.1-0
+
+The packages in the `eband_local_planner` repository were released into the `hydro` distro by running `/usr/bin/bloom-release eband_local_planner --track hydro --rosdistro hydro` on `Fri, 25 Apr 2014 20:33:29 -0000`
+
+The `eband_local_planner` package was released.
+
+Version of package(s) in repository `eband_local_planner`:
+- rosdistro version: `0.1.2-0`
+- old version: `0.1.2-0`
+- new version: `0.2.1-0`
+
+Versions of tools used:
+- bloom version: `0.5.4`
+- catkin_pkg version: `0.2.1`
+- rosdep version: `0.10.27`
+- rosdistro version: `0.3.5`
+- vcstools version: `0.1.33`
+
+
 ## eband_local_planner - 0.1.2-0
 
 User `piyushk@piyushk-desktop` released the packages in the `eband_local_planner` repository by running `/usr/bin/bloom-release eband_local_planner --track hydro --rosdistro hydro` on `Tue, 13 Aug 2013 03:59:24 -0000`
