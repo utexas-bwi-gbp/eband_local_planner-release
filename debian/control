@@ -1,0 +1,12 @@
+Source: ros-indigo-eband-local-planner
+Section: misc
+Priority: extra
+Maintainer: Piyush Khandelwal <piyushk@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-base-local-planner, ros-indigo-catkin, ros-indigo-cmake-modules, ros-indigo-control-toolbox, ros-indigo-costmap-2d, ros-indigo-geometry-msgs, ros-indigo-nav-core, ros-indigo-nav-msgs, ros-indigo-pluginlib, ros-indigo-roscpp, ros-indigo-tf, ros-indigo-tf-conversions
+Homepage: http://ros.org/wiki/eband_local_planner
+Standards-Version: 3.9.2
+
+Package: ros-indigo-eband-local-planner
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-base-local-planner, ros-indigo-control-toolbox, ros-indigo-costmap-2d, ros-indigo-geometry-msgs, ros-indigo-nav-core, ros-indigo-nav-msgs, ros-indigo-pluginlib, ros-indigo-roscpp, ros-indigo-tf, ros-indigo-tf-conversions
+Description: eband_local_planner implements a plugin to the base_local_planner. It implements the Elastic Band method on the SE2 manifold.
