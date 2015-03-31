@@ -1,3 +1,24 @@
+## eband_local_planner (hydro) - 0.3.0-0
+
+The packages in the `eband_local_planner` repository were released into the `hydro` distro by running `/usr/bin/bloom-release eband_local_planner --non-i --track hydro --rosdistro hydro` on `Tue, 31 Mar 2015 17:50:18 -0000`
+
+The `eband_local_planner` package was released.
+
+Version of package(s) in repository `eband_local_planner`:
+- upstream repository: https://github.com/utexas-bwi/eband_local_planner.git
+- release repository: https://github.com/utexas-bwi-gbp/eband_local_planner-release.git
+- rosdistro version: `0.2.2-0`
+- old version: `0.2.2-0`
+- new version: `0.3.0-0`
+
+Versions of tools used:
+- bloom version: `0.5.19`
+- catkin_pkg version: `0.2.6`
+- rosdep version: `0.10.33`
+- rosdistro version: `0.4.0`
+- vcstools version: `0.1.35`
+
+
 ## eband_local_planner (indigo) - 0.2.2-0
 
 The packages in the `eband_local_planner` repository were released into the `indigo` distro by running `/usr/bin/bloom-release eband_local_planner -r indigo -t indigo -n` on `Wed, 25 Mar 2015 22:16:30 -0000`
