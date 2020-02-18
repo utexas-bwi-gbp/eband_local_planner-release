@@ -1,0 +1,13 @@
+Source: ros-melodic-eband-local-planner
+Section: misc
+Priority: optional
+Maintainer: Piyush Khandelwal <piyushk@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-melodic-base-local-planner, ros-melodic-catkin, ros-melodic-cmake-modules, ros-melodic-control-toolbox, ros-melodic-costmap-2d, ros-melodic-dynamic-reconfigure, ros-melodic-geometry-msgs, ros-melodic-nav-core, ros-melodic-nav-msgs, ros-melodic-pluginlib, ros-melodic-roscpp, ros-melodic-tf2-eigen, ros-melodic-tf2-geometry-msgs, ros-melodic-tf2-ros
+Homepage: http://ros.org/wiki/eband_local_planner
+Standards-Version: 3.9.2
+
+Package: ros-melodic-eband-local-planner
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-melodic-base-local-planner, ros-melodic-control-toolbox, ros-melodic-costmap-2d, ros-melodic-dynamic-reconfigure, ros-melodic-geometry-msgs, ros-melodic-nav-core, ros-melodic-nav-msgs, ros-melodic-pluginlib, ros-melodic-roscpp, ros-melodic-tf2-eigen, ros-melodic-tf2-geometry-msgs, ros-melodic-tf2-ros
+Description: eband_local_planner implements a plugin to the base_local_planner.
+ It implements the Elastic Band method on the SE2 manifold.
