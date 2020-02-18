@@ -43,11 +43,15 @@
 // abstract class from which our plugin inherits
 #include <nav_core/base_local_planner.h>
 
+// dynamic reconfigure
+#include <dynamic_reconfigure/server.h>
+
 // classes wich are parts of this pkg
 #include <eband_local_planner/eband_local_planner.h>
 #include <eband_local_planner/conversions_and_types.h>
 #include <eband_local_planner/eband_visualization.h>
 #include <eband_local_planner/eband_trajectory_controller.h>
+#include <eband_local_planner/EBandPlannerConfig.h>
 
 // local planner specific classes which provide some macros
 #include <base_local_planner/goal_functions.h>
@@ -61,8 +65,7 @@
 
 // transforms
 #include <angles/angles.h>
-#include <tf/tf.h>
-#include <tf/transform_listener.h>
+#include <tf2_ros/buffer.h>
 
 // costmap & geometry
 #include <costmap_2d/costmap_2d_ros.h>
@@ -85,15 +88,15 @@ namespace eband_local_planner{
        * @brief Default constructor for the ros wrapper
        */
       EBandPlannerROS();
-
-      /**
+    
+    /**
        * @brief Constructs the ros wrapper
        * @param name The name to give this instance of the elastic band local planner
        * @param tf A pointer to a transform listener
        * @param costmap The cost map to use for assigning costs to trajectories
        */
-      EBandPlannerROS(std::string name, tf::TransformListener* tf,
-          costmap_2d::Costmap2DROS* costmap_ros);
+    EBandPlannerROS(std::string name, tf2_ros::Buffer* tf,
+		    costmap_2d::Costmap2DROS* costmap_ros);
 
       /**
        * @brief  Destructor for the wrapper
@@ -106,8 +109,8 @@ namespace eband_local_planner{
        * @param tf A pointer to a transform listener
        * @param costmap The cost map to use for assigning costs to trajectories
        */
-      void initialize(std::string name, tf::TransformListener* tf,
-          costmap_2d::Costmap2DROS* costmap_ros);
+    void initialize(std::string name, tf2_ros::Buffer* tf,
+		    costmap_2d::Costmap2DROS* costmap_ros);
 
       /**
        * @brief Set the plan that the controller is following; also reset eband-planner
@@ -131,11 +134,23 @@ namespace eband_local_planner{
 
     private:
 
+      /**
+       * @brief Reconfigures node parameters
+       * @param config The dynamic reconfigure node configuration
+       * @param level Reconfiguration level
+       */
+      void reconfigureCallback(EBandPlannerConfig& config, uint32_t level);
+
+      typedef dynamic_reconfigure::Server<
+        eband_local_planner::EBandPlannerConfig> drs;
+      //! dynamic reconfigure server ptr
+      boost::shared_ptr<drs> drs_;
+
       // pointer to external objects (do NOT delete object)
       costmap_2d::Costmap2DROS* costmap_ros_; ///<@brief pointer to costmap
-      tf::TransformListener* tf_; ///<@brief pointer to Transform Listener
+      tf2_ros::Buffer* tf_; ///<@brief pointer to Transform Listener
 
-      // parameters
+    // parameters
       double yaw_goal_tolerance_, xy_goal_tolerance_; ///<@brief parameters to define region in which goal is treated as reached
       double rot_stopped_vel_, trans_stopped_vel_; ///<@brief lower bound for absolute value of velocity (with respect to stick-slip behaviour)
 

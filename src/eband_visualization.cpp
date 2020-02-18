@@ -78,6 +78,13 @@ namespace eband_local_planner{
     }
   }
 
+  
+  void EBandVisualization::reconfigure(
+    eband_local_planner::EBandPlannerConfig& config)
+  {
+    marker_lifetime_ = config.marker_lifetime;
+  }
+
 
   void EBandVisualization::publishBand(std::string marker_name_space, std::vector<Bubble> band)
   {
@@ -333,17 +340,19 @@ namespace eband_local_planner{
       Eigen::Quaterniond rotate_quat(c, s*rotation_axis.x(), s*rotation_axis.y(), s*rotation_axis.z());
 
       // transform quaternion back from Eigen to ROS
-      tf::Quaternion orientation_tf;
+      // tf::Quaternion orientation_tf;
       geometry_msgs::Quaternion orientation_msg;
-      tf::quaternionEigenToTF(rotate_quat, orientation_tf);
-      tf::quaternionTFToMsg(orientation_tf, orientation_msg);
+      // tf::quaternionEigenToTF(rotate_quat, orientation_tf);
+      // tf::quaternionTFToMsg(orientation_tf, orientation_msg);
 
+      tf2::convert(rotate_quat, orientation_msg);
+      
       // finally set orientation of marker
       marker.pose.orientation = orientation_msg;
 
       // scale ~ diameter --> is 2x expansion ~ radius
       double scale = sqrt( (wrench.wrench.force.x * wrench.wrench.force.x) + (wrench.wrench.force.y * wrench.wrench.force.y) +
-          ( (wrench.wrench.torque.z/getCircumscribedRadius(*costmap_ros_))*(wrench.wrench.torque.z/getCircumscribedRadius(*costmap_ros_)) ) );
+			   ( (wrench.wrench.torque.z/getCircumscribedRadius(*costmap_ros_))*(wrench.wrench.torque.z/getCircumscribedRadius(*costmap_ros_)) ) );
       marker.scale.x = scale; //1.0;
       marker.scale.y = scale; //1.0;
       marker.scale.z = scale; //1.0;
@@ -353,11 +362,11 @@ namespace eband_local_planner{
       marker.color.g = 0.0f;
       marker.color.b = 0.0f;
       switch(marker_color)
-      {
+	{
         case red:	{ marker.color.r = 1.0f; break; }
         case green:	{ marker.color.g = 1.0f; break; }
         case blue:	{ marker.color.b = 1.0f; break; }
-      }
+	}
       // transparency (alpha value < 1 : displays marker transparent)
       marker.color.a = 1.25;
     }

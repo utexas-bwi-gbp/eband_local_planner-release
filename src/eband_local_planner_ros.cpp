@@ -46,7 +46,7 @@
 
 // register this planner as a BaseGlobalPlanner plugin
 // (see http://www.ros.org/wiki/pluginlib/Tutorials/Writing%20and%20Using%20a%20Simple%20Plugin)
-PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planner::EBandPlannerROS, nav_core::BaseLocalPlanner)
+PLUGINLIB_EXPORT_CLASS(eband_local_planner::EBandPlannerROS, nav_core::BaseLocalPlanner)
 
 
   namespace eband_local_planner{
@@ -54,7 +54,7 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
     EBandPlannerROS::EBandPlannerROS() : costmap_ros_(NULL), tf_(NULL), initialized_(false) {}
 
 
-    EBandPlannerROS::EBandPlannerROS(std::string name, tf::TransformListener* tf, costmap_2d::Costmap2DROS* costmap_ros)
+    EBandPlannerROS::EBandPlannerROS(std::string name, tf2_ros::Buffer* tf, costmap_2d::Costmap2DROS* costmap_ros)
       : costmap_ros_(NULL), tf_(NULL), initialized_(false)
     {
       // initialize planner
@@ -65,7 +65,7 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
     EBandPlannerROS::~EBandPlannerROS() {}
 
 
-    void EBandPlannerROS::initialize(std::string name, tf::TransformListener* tf, costmap_2d::Costmap2DROS* costmap_ros)
+    void EBandPlannerROS::initialize(std::string name, tf2_ros::Buffer* tf, costmap_2d::Costmap2DROS* costmap_ros)
     {
       // check if the plugin is already initialized
       if(!initialized_)
@@ -77,15 +77,6 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
 
         // create Node Handle with name of plugin (as used in move_base for loading)
         ros::NodeHandle pn("~/" + name);
-
-        // read parameters from parameter server
-        // get tolerances for "Target reached"
-        pn.param("yaw_goal_tolerance", yaw_goal_tolerance_, 0.05);
-        pn.param("xy_goal_tolerance", xy_goal_tolerance_, 0.1);
-
-        // set lower bound for velocity -> if velocity in this region stop! (to avoid limit-cycles or lock)
-        pn.param("rot_stopped_vel", rot_stopped_vel_, 1e-2);
-        pn.param("trans_stopped_vel", trans_stopped_vel_, 1e-2);
 
         // advertise topics (adapted global plan and predicted local trajectory)
         g_plan_pub_ = pn.advertise<nav_msgs::Path>("global_plan", 1);
@@ -116,6 +107,10 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
         // initialize visualization - set node handle and pointer to costmap
         eband_visual_->initialize(pn, costmap_ros);
 
+        // create and initialize dynamic reconfigure
+        drs_.reset(new drs(pn));
+        drs::CallbackType cb = boost::bind(&EBandPlannerROS::reconfigureCallback, this, _1, _2);
+        drs_->setCallback(cb);
 
         // set initialized flag
         initialized_ = true;
@@ -127,6 +122,31 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
       {
         ROS_WARN("This planner has already been initialized, doing nothing.");
       }
+    }
+
+
+    void EBandPlannerROS::reconfigureCallback(EBandPlannerConfig& config,
+      uint32_t level)
+    {
+      xy_goal_tolerance_ = config.xy_goal_tolerance;
+      yaw_goal_tolerance_ = config.yaw_goal_tolerance;
+      rot_stopped_vel_ = config.rot_stopped_vel;
+      trans_stopped_vel_ = config.trans_stopped_vel;
+
+      if (eband_)
+        eband_->reconfigure(config);
+      else
+        ROS_ERROR("Reconfigure CB called before eband planner initialization");
+
+      if (eband_trj_ctrl_)
+        eband_trj_ctrl_->reconfigure(config);
+      else
+        ROS_ERROR("Reconfigure CB called before trajectory controller initialization!");
+
+      if (eband_visual_)
+        eband_visual_->reconfigure(config);
+      else
+        ROS_ERROR("Reconfigure CB called before eband visualizer initialization");
     }
 
 
@@ -206,21 +226,20 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
 
       // instantiate local variables
       //std::vector<geometry_msgs::PoseStamped> local_plan;
-      tf::Stamped<tf::Pose> global_pose;
-      geometry_msgs::PoseStamped global_pose_msg;
+
+      geometry_msgs::PoseStamped global_pose;
       std::vector<geometry_msgs::PoseStamped> tmp_plan;
 
       // get curent robot position
       ROS_DEBUG("Reading current robot Position from costmap and appending it to elastic band.");
       if(!costmap_ros_->getRobotPose(global_pose))
-      {
-        ROS_WARN("Could not retrieve up to date robot pose from costmap for local planning.");
-        return false;
-      }
+	{
+	  ROS_WARN("Could not retrieve up to date robot pose from costmap for local planning.");
+	  return false;
+	}
 
       // convert robot pose to frame in plan and set position in band at which to append
-      tf::poseStampedTFToMsg(global_pose, global_pose_msg);
-      tmp_plan.assign(1, global_pose_msg);
+      tmp_plan.assign(1, global_pose);
       eband_local_planner::AddAtPosition add_frames_at = add_front;
 
       // set it to elastic band and let eband connect it
@@ -275,13 +294,12 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
 
         // set it to elastic band and let eband connect it
         ROS_DEBUG("Adding %d new frames to current band", (int) append_transformed_plan.size());
-        add_frames_at = add_back;
         if(eband_->addFrames(append_transformed_plan, add_back))
-        {
-          // appended frames succesfully to global plan - set new start-end counts
-          ROS_DEBUG("Sucessfully added frames to band");
-          plan_start_end_counter_ = plan_start_end_counter;
-        }
+	  {
+	    // appended frames succesfully to global plan - set new start-end counts
+	    ROS_DEBUG("Sucessfully added frames to band");
+	    plan_start_end_counter_ = plan_start_end_counter;
+	  }
         else {
           ROS_WARN("Failed to add frames to existing band");
           return false;
@@ -366,7 +384,7 @@ PLUGINLIB_DECLARE_CLASS(eband_local_planner, EBandPlannerROS, eband_local_planne
       // 	base_odom = base_odom_;
       // }
 
-      // tf::Stamped<tf::Pose> global_pose;
+      // geometry_msgs::PoseStamped global_pose;
       // costmap_ros_->getRobotPose(global_pose);
 
       // // analogous to dwa_planner the actual check uses the routine implemented in trajectory_planner (trajectory rollout)

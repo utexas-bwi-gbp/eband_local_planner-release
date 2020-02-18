@@ -1,6 +1,6 @@
 <package>
   <name>eband_local_planner</name>
-  <version>0.3.1</version>
+  <version>0.4.0</version>
   <description>
     eband_local_planner implements a plugin to the
     base_local_planner. It implements the Elastic Band method on the
@@ -26,24 +26,28 @@
   <build_depend>control_toolbox</build_depend>
   <build_depend>cmake_modules</build_depend> <!-- to find Eigen -->
   <build_depend>costmap_2d</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>nav_core</build_depend>
   <build_depend>nav_msgs</build_depend>
   <build_depend>pluginlib</build_depend>
   <build_depend>roscpp</build_depend>
-  <build_depend>tf</build_depend>
-  <build_depend>tf_conversions</build_depend>
+  <build_depend>tf2_eigen</build_depend>
+  <build_depend>tf2_geometry_msgs</build_depend>
+  <build_depend>tf2_ros</build_depend>
 
   <run_depend>base_local_planner</run_depend>
   <run_depend>control_toolbox</run_depend>
   <run_depend>costmap_2d</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>nav_core</run_depend>
   <run_depend>nav_msgs</run_depend>
   <run_depend>pluginlib</run_depend>
   <run_depend>roscpp</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>tf_conversions</run_depend>
+  <run_depend>tf2_eigen</run_depend>
+  <run_depend>tf2_geometry_msgs</run_depend>
+  <run_depend>tf2_ros</run_depend>
 
   <export>
     <nav_core plugin="${prefix}/elp_plugin.xml"/>
