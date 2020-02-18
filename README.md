@@ -1,3 +1,26 @@
+## eband_local_planner (kinetic) - 0.3.1-1
+
+The packages in the `eband_local_planner` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release eband_local_planner --track kinetic --rosdistro kinetic --new-track` on `Tue, 18 Feb 2020 21:47:42 -0000`
+
+The `eband_local_planner` package was released.
+
+Version of package(s) in repository `eband_local_planner`:
+
+- upstream repository: https://github.com/utexas-bwi/eband_local_planner.git
+- release repository: https://github.com/utexas-bwi-gbp/eband_local_planner-release.git
+- rosdistro version: `0.3.1-0`
+- old version: `0.3.1-0`
+- new version: `0.3.1-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.0`
+- catkin_pkg version: `0.4.14`
+- rosdep version: `0.17.1`
+- rosdistro version: `0.7.5`
+- vcstools version: `0.1.42`
+
+
 ## eband_local_planner (kinetic) - 0.3.1-0
 
 The packages in the `eband_local_planner` repository were released into the `kinetic` distro by running `/usr/bin/bloom-release eband_local_planner -r kinetic -t kinetic -n` on `Sun, 02 Jul 2017 23:27:42 -0000`
